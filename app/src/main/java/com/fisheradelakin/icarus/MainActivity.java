@@ -175,7 +175,6 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
                 .setMessage(getString(R.string.start_dialog_message)).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                finish();
             }
         }).setCancelable(false).show();
     }
@@ -261,6 +260,8 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
             int confidence = detectedActivitiesMap.containsKey(Constants.MONITORED_ACTIVITIES[i]) ? detectedActivitiesMap.get(Constants.MONITORED_ACTIVITIES[i]) : 0;
             tempList.add(new DetectedActivity(Constants.MONITORED_ACTIVITIES[i], confidence));
         }
+
+
     }
 
     private void updateDetectedActivitiesList(ArrayList<DetectedActivity> updatedActivities) {

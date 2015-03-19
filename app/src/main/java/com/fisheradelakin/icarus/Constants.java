@@ -21,7 +21,7 @@ public class Constants {
     public static final String DETECTED_ACTIVITIES = PACKAGE_NAME + ".DETECTED_ACTIVITIES";
 
     // desired time between activity detections.
-    public static final long DETECTION_INTERVAL_IN_MILLISECONDS = 2000;
+    public static final long DETECTION_INTERVAL_IN_MILLISECONDS = 5000;
 
     // list of monitored activities
     protected static final int[] MONITORED_ACTIVITIES = {
