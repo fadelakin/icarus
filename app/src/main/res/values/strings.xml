@@ -1,6 +1,15 @@
 <resources>
     <string name="app_name">Icarus</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="title">Icarus</string>
+    <string name="description">I will remind you to check your vehicle for your child once you leave it. \n\nSimple as that.</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+
+    <string-array name="notification_messages">
+        <item>You might want to check your car for your child.</item>
+        <item>Yo! Check your car for your child.</item>
+        <item>Please check your car for your child.</item>
+        <item>Check your car for your child right now!</item>
+    </string-array>
 </resources>
