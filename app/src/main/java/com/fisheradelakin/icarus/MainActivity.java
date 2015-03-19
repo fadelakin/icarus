@@ -1,9 +1,12 @@
 package com.fisheradelakin.icarus;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
@@ -16,6 +19,7 @@ public class MainActivity extends ActionBarActivity {
 
     @InjectView(R.id.startButton) FButton startButton;
     @InjectView(R.id.stopButton) FButton stopButton;
+    @InjectView(R.id.activityTextView) TextView mActivityText;
 
     SharedPreferences mSharedPreferences;
 
@@ -43,6 +47,7 @@ public class MainActivity extends ActionBarActivity {
         mSharedPreferences.edit().putBoolean("isRunning", true).apply();
         disableButton(startButton);
         enableButton(stopButton);
+        showStartDialog();
     }
 
     // onclick implementation for stop button
@@ -52,6 +57,17 @@ public class MainActivity extends ActionBarActivity {
         mSharedPreferences.edit().putBoolean("isRunning", false).apply();
         disableButton(stopButton);
         enableButton(startButton);
+    }
+
+    public void showStartDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Done!")
+                .setMessage(getString(R.string.start_dialog_message)).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        }).setCancelable(false).show();
     }
 
     private void disableButton(FButton button) {
