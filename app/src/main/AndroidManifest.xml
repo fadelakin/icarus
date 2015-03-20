@@ -24,8 +24,15 @@
             </intent-filter>
         </activity>
         <service android:name=".DetectedActivityIntentService"
+                 android:enabled="true"
                  android:exported="false"/>
-        <receiver android:name=".MainActivity$ActivityDetectionBroadcastReceiver"/>
+        <receiver android:name=".MainActivity$ActivityDetectionBroadcastReceiver"
+                  android:enabled="true"
+                  android:exported="false">
+            <intent-filter>
+                <action android:name="com.fisheradelakin.icarus.Constants.BROADCAST_ACTION"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

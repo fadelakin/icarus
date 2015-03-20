@@ -39,6 +39,7 @@ import butterknife.OnClick;
 import info.hoang8f.widget.FButton;
 
 // TODO: REFACTOR
+// TODO: Add reboot reciever
 
 public class MainActivity extends ActionBarActivity implements ConnectionCallbacks, OnConnectionFailedListener, ResultCallback<Status> {
 
@@ -92,6 +93,8 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
 
         // kick off the request to build GoogleApiClient
         buildGoogleApiClient();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReciever, new IntentFilter(Constants.BROADCAST_ACTION));
     }
 
     // builds a GoogleApiClient
@@ -120,13 +123,20 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
         super.onResume();
         // register the broadcast receiver that informs this activity of the detected activity object
         // sent by the intent service
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReciever, new IntentFilter(Constants.BROADCAST_ACTION));
+        //LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReciever, new IntentFilter(Constants.BROADCAST_ACTION));
+    }
+
+    @Override
+    protected void onDestroy() {
+        // unregister the broadcast receiver that was registered during onResume()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReciever);
+        super.onDestroy();
     }
 
     @Override
     protected void onPause() {
         // unregister the broadcast receiver that was registered during onResume()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReciever);
+        // LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReciever);
         super.onPause();
     }
 
@@ -225,7 +235,7 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
             boolean requestingUpdates = !getUpdatesRequestedState();
             setUpdatesRequestedState(requestingUpdates);
 
-            Toast.makeText(this, getString(requestingUpdates ? R.string.activity_updates_added : R.string.activity_updates_removed), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, getString(requestingUpdates ? R.string.activity_updates_added : R.string.activity_updates_removed), Toast.LENGTH_SHORT).show();
         } else {
             Log.e(TAG, "Error adding or removing activity detection: " + status.getStatusMessage());
         }
@@ -304,6 +314,8 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
                         .setOnlyAlertOnce(true);
                 NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 manager.notify(1, nBuilder.build());
+
+                // TODO: add vibration
             }
 
             SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
