@@ -150,7 +150,6 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
     // onclick implementation for stop button
     @OnClick(R.id.stopButton)
     public void stop(View view) {
-        Toast.makeText(this, "Stop", Toast.LENGTH_SHORT).show();
         mSharedPreferences.edit().putBoolean("isRunning", false).apply();
         disableButton(stopButton);
         enableButton(startButton);
@@ -289,18 +288,11 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
             String act = Constants.getActivityString(getApplicationContext(), upAct.getType());
             mActivityText.setText(act);
 
-            SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
-            if(act.equals(getString(R.string.in_vehicle))) {
-                editor.putString("vehicle", getString(R.string.in_vehicle));
-                editor.apply();
-            } else {
-                editor.putString("vehicle", "Not in a vehicle");
-                editor.apply();
-            }
-
             SharedPreferences prefs = getPreferences(MODE_PRIVATE);
             String previous = prefs.getString("vehicle", null);
-            if(!previous.equals(act) && upAct.getType() == 2) {
+            // BUG: It sends a notification when you're walking. :/
+            // TODO: test this thoroughly
+            if(previous.equals(getString(R.string.in_vehicle)) && upAct.getType() == 2 && upAct.getConfidence() >= 50) {
                 NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.ic_small_icon)
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
@@ -312,6 +304,15 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
                         .setOnlyAlertOnce(true);
                 NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 manager.notify(1, nBuilder.build());
+            }
+
+            SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+            if(act.equals(getString(R.string.in_vehicle))) {
+                editor.putString("vehicle", getString(R.string.in_vehicle));
+                editor.apply();
+            } else {
+                editor.putString("activity", act);
+                editor.apply();
             }
 
             updateDetectedActivitiesList(updatedActivities);

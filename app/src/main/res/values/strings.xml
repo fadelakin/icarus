@@ -21,7 +21,7 @@
     <string name="activity_updates_removed">Activity updates removed</string>
 
     <string-array name="notification_messages">
-        <item>You might want to check your car for your child.</item>
+        <item>Check your car for your child.</item>
         <item>Yo! Check your car for your child.</item>
         <item>Please check your car for your child.</item>
         <item>Check your car for your child right now!</item>

@@ -25,6 +25,7 @@
         </activity>
         <service android:name=".DetectedActivityIntentService"
                  android:exported="false"/>
+        <receiver android:name=".MainActivity$ActivityDetectionBroadcastReceiver"/>
     </application>
 
 </manifest>
