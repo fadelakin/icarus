@@ -8,6 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -27,6 +30,7 @@ import com.google.android.gms.common.api.Status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -261,11 +265,15 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
             tempList.add(new DetectedActivity(Constants.MONITORED_ACTIVITIES[i], confidence));
         }
 
-
     }
 
     private void updateDetectedActivitiesList(ArrayList<DetectedActivity> updatedActivities) {
         updateActivities(updatedActivities);
+    }
+
+    public String getRandomNotificationMessage() {
+        String[] messages = getResources().getStringArray(R.array.notification_messages);
+        return messages[new Random().nextInt(messages.length)];
     }
 
     public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {
@@ -275,6 +283,28 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
         public void onReceive(Context context, Intent intent) {
             ArrayList<DetectedActivity> updatedActivities =
                     intent.getParcelableArrayListExtra(Constants.ACTIVITY_EXTRA);
+            DetectedActivity upAct = intent.getParcelableExtra(Constants.ACTIVITY_EXTRA + "2");
+            String act = Constants.getActivityString(getApplicationContext(), upAct.getType());
+            mActivityText.setText(act);
+
+            SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+            if(act.equals(getString(R.string.in_vehicle))) {
+                editor.putString("vehicle", mActivityText.getText().toString());
+                editor.apply();
+            }
+
+            SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+            String previous = prefs.getString("vehicle", null);
+            if(!previous.equals(act) && upAct.getType() == 2) {
+                NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(context)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), ))
+                        .setContentTitle(getResources().getString(R.string.app_name))
+                        .setContentText(getRandomNotificationMessage())
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .setOnlyAlertOnce(true);
+            }
+
             updateDetectedActivitiesList(updatedActivities);
         }
     }

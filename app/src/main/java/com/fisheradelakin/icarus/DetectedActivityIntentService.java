@@ -9,7 +9,6 @@ import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Fisher on 3/19/15.
@@ -43,39 +42,6 @@ public class DetectedActivityIntentService extends IntentService {
         Log.i(TAG, "most probable");
         Log.i(TAG, Constants.getActivityString(getApplicationContext(), mostProbable.getType()) + " " + mostProbable.getConfidence() + "%");
 
-        /*if(ActivityRecognitionResult.hasResult(intent)) {
-            // get the update
-            ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
-
-            // log the update
-            Log.i(TAG, result.toString());
-
-            // get the most probable activity from the list of activities in the update
-            DetectedActivity mostProbableActivity = result.getMostProbableActivity();
-
-            // get the confidence percentage for the most probable activity
-            int confidence  = mostProbableActivity.getConfidence();
-
-            // get the type of activity
-            int activityType = mostProbableActivity.getType();
-            mostProbableActivity.getVersionCode();
-
-            localIntent.putExtra(Constants.ACTIVITY_EXTRA, activityType);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-
-            Log.d(TAG, "activity: " + Constants.getActivityString(getApplicationContext(), activityType));
-
-            if(confidence >= 50) {
-                String mode = Constants.getActivityString(getApplicationContext(), activityType);
-                if(activityType == DetectedActivity.ON_FOOT) {
-                    DetectedActivity betterActivity = walkingOrRunning(result.getProbableActivities());
-
-                    if(null != betterActivity)
-                        mode = Constants.getActivityString(getApplicationContext(), betterActivity.getType());
-                }
-            }
-        }*/
-
 
         // Log each activity
         Log.i(TAG, "activities detected");
@@ -85,21 +51,7 @@ public class DetectedActivityIntentService extends IntentService {
 
         // Broadcast the list of detected activities
         localIntent.putExtra(Constants.ACTIVITY_EXTRA, detectedActivities);
+        localIntent.putExtra(Constants.ACTIVITY_EXTRA + "2", mostProbable);
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-    }
-
-    private DetectedActivity walkingOrRunning(List<DetectedActivity> probableActivites) {
-        DetectedActivity myActivity = null;
-        int confidence = 0;
-        for(DetectedActivity activity : probableActivites) {
-            Log.i(TAG, Constants.getActivityString(getApplicationContext(), activity.getType()) + " " + activity.getConfidence() + "%");
-            if(activity.getType() != DetectedActivity.RUNNING && activity.getType() != DetectedActivity.WALKING)
-                continue;
-
-            if (activity.getConfidence() > confidence)
-                myActivity = activity;
-        }
-
-        return myActivity;
     }
 }
