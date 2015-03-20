@@ -26,7 +26,7 @@
         <service android:name=".DetectedActivityIntentService"
                  android:enabled="true"
                  android:exported="false"/>
-        <receiver android:name=".MainActivity$ActivityDetectionBroadcastReceiver"
+        <receiver android:name=".ActivityDetectionBroadcastReceiver"
                   android:enabled="true"
                   android:exported="false">
             <intent-filter>

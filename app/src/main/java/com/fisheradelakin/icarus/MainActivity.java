@@ -53,7 +53,7 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
 
     @InjectView(R.id.startButton) FButton startButton;
     @InjectView(R.id.stopButton) FButton stopButton;
-    @InjectView(R.id.activityTextView) TextView mActivityText;
+    //@InjectView(R.id.activityTextView) TextView mActivityText;
 
     protected SharedPreferences mSharedPreferences;
 
@@ -263,7 +263,7 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
     }
 
     // process list of recently detected activities and update the list of objects
-    protected void updateActivities(ArrayList<DetectedActivity> detectedActivities) {
+    protected static void updateActivities(ArrayList<DetectedActivity> detectedActivities) {
         HashMap<Integer, Integer> detectedActivitiesMap = new HashMap<>();
         for(DetectedActivity activity : detectedActivities) {
             detectedActivitiesMap.put(activity.getType(), activity.getConfidence());
@@ -278,56 +278,9 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
 
     }
 
-    private void updateDetectedActivitiesList(ArrayList<DetectedActivity> updatedActivities) {
+    protected static void updateDetectedActivitiesList(ArrayList<DetectedActivity> updatedActivities) {
         updateActivities(updatedActivities);
     }
 
-    public String getRandomNotificationMessage() {
-        String[] messages = getResources().getStringArray(R.array.notification_messages);
-        return messages[new Random().nextInt(messages.length)];
-    }
 
-    public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {
-        protected static final String TAG = "activity-detection-response-receiver";
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ArrayList<DetectedActivity> updatedActivities =
-                    intent.getParcelableArrayListExtra(Constants.ACTIVITY_EXTRA);
-            DetectedActivity upAct = intent.getParcelableExtra(Constants.ACTIVITY_EXTRA + "2");
-            String act = Constants.getActivityString(getApplicationContext(), upAct.getType());
-            mActivityText.setText(act);
-
-            SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-            String previous = prefs.getString("vehicle", null);
-            // BUG: It sends a notification when you're walking. :/
-            // TODO: test this thoroughly
-            if(previous.equals(getString(R.string.in_vehicle)) && upAct.getType() == 2 && upAct.getConfidence() >= 50) {
-                NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.ic_small_icon)
-                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                        .setTicker("Check your car!")
-                        .setContentTitle(getResources().getString(R.string.app_name))
-                        .setContentText(getRandomNotificationMessage())
-                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                        .setPriority(NotificationCompat.PRIORITY_MAX)
-                        .setOnlyAlertOnce(true);
-                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                manager.notify(1, nBuilder.build());
-
-                // TODO: add vibration
-            }
-
-            SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
-            if(act.equals(getString(R.string.in_vehicle))) {
-                editor.putString("vehicle", getString(R.string.in_vehicle));
-                editor.apply();
-            } else {
-                editor.putString("activity", act);
-                editor.apply();
-            }
-
-            updateDetectedActivitiesList(updatedActivities);
-        }
-    }
 }
