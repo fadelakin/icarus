@@ -1,6 +1,7 @@
 package com.fisheradelakin.icarus;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -37,6 +38,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import info.hoang8f.widget.FButton;
 
+// TODO: REFACTOR
 
 public class MainActivity extends ActionBarActivity implements ConnectionCallbacks, OnConnectionFailedListener, ResultCallback<Status> {
 
@@ -289,7 +291,10 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
 
             SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
             if(act.equals(getString(R.string.in_vehicle))) {
-                editor.putString("vehicle", mActivityText.getText().toString());
+                editor.putString("vehicle", getString(R.string.in_vehicle));
+                editor.apply();
+            } else {
+                editor.putString("vehicle", "Not in a vehicle");
                 editor.apply();
             }
 
@@ -297,19 +302,19 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
             String previous = prefs.getString("vehicle", null);
             if(!previous.equals(act) && upAct.getType() == 2) {
                 NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(context)
-                        .setSmallIcon()
+                        .setSmallIcon(R.drawable.ic_small_icon)
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                        .setTicker("Check your car!")
                         .setContentTitle(getResources().getString(R.string.app_name))
                         .setContentText(getRandomNotificationMessage())
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setOnlyAlertOnce(true);
+                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                manager.notify(1, nBuilder.build());
             }
 
             updateDetectedActivitiesList(updatedActivities);
         }
     }
-
-
-
 }
