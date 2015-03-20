@@ -297,7 +297,8 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
             String previous = prefs.getString("vehicle", null);
             if(!previous.equals(act) && upAct.getType() == 2) {
                 NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(context)
-                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), ))
+                        .setSmallIcon()
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                         .setContentTitle(getResources().getString(R.string.app_name))
                         .setContentText(getRandomNotificationMessage())
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
