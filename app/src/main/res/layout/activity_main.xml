@@ -25,22 +25,13 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="35sp"
+        android:layout_height="0dp"
+        android:textSize="32sp"
         android:fontFamily="sans-serif-thin"
         android:textColor="@color/normalText"
         android:gravity="center"
         android:text="@string/description"
         android:layout_weight="1"/>
-
-    <!--<TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="@string/default_activity_string"
-        android:layout_gravity="center"
-        android:textColor="@color/normalText"
-        android:id="@+id/activityTextView"/>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,20 +39,7 @@
         android:orientation="horizontal">
 
         <info.hoang8f.widget.FButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/start"
-            android:textColor="@color/text_button_enabled"
-            android:id="@+id/startButton"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            fbutton:buttonColor="@color/blue_enabled"
-            fbutton:shadowColor="@color/blue_enabled_shadow"/>
-
-        <info.hoang8f.widget.FButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/stop"
             android:textColor="@color/text_button_enabled"
@@ -73,5 +51,18 @@
             fbutton:buttonColor="@color/blue_enabled"
             fbutton:shadowColor="@color/blue_enabled_shadow"/>
         </LinearLayout>
+
+    <!--<info.hoang8f.widget.FButton
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/start"
+               android:textColor="@color/text_button_enabled"
+               android:id="@+id/startButton"
+               android:layout_gravity="center_vertical"
+               android:layout_weight="1"
+               android:layout_marginRight="10dp"
+               android:layout_marginEnd="10dp"
+               fbutton:buttonColor="@color/blue_enabled"
+               fbutton:shadowColor="@color/blue_enabled_shadow"/>-->
 
 </LinearLayout>

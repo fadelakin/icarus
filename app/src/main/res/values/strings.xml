@@ -2,7 +2,7 @@
     <string name="app_name">Icarus</string>
 
     <string name="title">Icarus</string>
-    <string name="description">I will remind you to check your vehicle for your child once you leave it. \n\nSimple as that.</string>
+    <string name="description">I will remind you to check your vehicle for your child when you leave it. \n\nSimple as that. I\'m already running so don\'t worry about a thing.</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="start_dialog_message">A notification will appear when you leave your vehicle to let you know that you should check it for your child.</string>

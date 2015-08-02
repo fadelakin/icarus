@@ -1,40 +1,32 @@
 package com.fisheradelakin.icarus;
 
 import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
-import android.media.RingtoneManager;
-import android.support.v4.app.NotificationCompat;
+import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.ActivityRecognition;
-import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.DetectedActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 import info.hoang8f.widget.FButton;
 
@@ -46,13 +38,11 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
     protected static final String TAG = "activity-recognition";
 
     protected ActivityDetectionBroadcastReceiver mBroadcastReciever;
-
     protected GoogleApiClient mGoogleApiClient;
-
     private PendingIntent mActivityDetectionPendingIntent;
 
-    @InjectView(R.id.startButton) FButton startButton;
-    @InjectView(R.id.stopButton) FButton stopButton;
+    //@Bind(R.id.startButton) FButton startButton;
+    @Bind(R.id.stopButton) FButton stopButton;
     //@InjectView(R.id.activityTextView) TextView mActivityText;
 
     protected SharedPreferences mSharedPreferences;
@@ -63,14 +53,14 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         // shared preferences
         mSharedPreferences = getSharedPreferences("settings", 0);
 
         // enable/disable buttons
         if(mSharedPreferences.getBoolean("isRunning", false)) {
-            disableButton(startButton);
+            //disableButton(startButton);
         } else {
             disableButton(stopButton);
         }
@@ -83,7 +73,7 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
         if(savedInstanceState != null && savedInstanceState.containsKey(Constants.DETECTED_ACTIVITIES)) {
             mDetectedActivities = (ArrayList<DetectedActivity>) savedInstanceState.getSerializable(Constants.DETECTED_ACTIVITIES);
         } else {
-            mDetectedActivities = new ArrayList<DetectedActivity>();
+            mDetectedActivities = new ArrayList<>();
 
             // set the confidence level of each monitored activity to zero.
             for(int i = 0; i < Constants.MONITORED_ACTIVITIES.length; i++) {
@@ -106,6 +96,21 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
                 .build();
     }
 
+    private void startDetectingActivity() {
+        if (!mGoogleApiClient.isConnected()) {
+            Toast.makeText(this, getString(R.string.not_connected), Toast.LENGTH_SHORT).show();
+        }
+        mSharedPreferences.edit().putBoolean("isRunning", true).apply();
+        //disableButton(startButton);
+        enableButton(stopButton);
+        showStartDialog(); // this should only be called once.
+
+        ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
+                mGoogleApiClient,
+                Constants.DETECTION_INTERVAL_IN_MILLISECONDS,
+                getActivityDetectionPendingIntent()).setResultCallback(this);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -123,7 +128,7 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
         super.onResume();
         // register the broadcast receiver that informs this activity of the detected activity object
         // sent by the intent service
-        //LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReciever, new IntentFilter(Constants.BROADCAST_ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReciever, new IntentFilter(Constants.BROADCAST_ACTION));
     }
 
     @Override
@@ -136,12 +141,12 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
     @Override
     protected void onPause() {
         // unregister the broadcast receiver that was registered during onResume()
-        // LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReciever);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReciever);
         super.onPause();
     }
 
     // onclick implementation for start button
-    @OnClick(R.id.startButton)
+    /*@OnClick(R.id.startButton)
     public void start(View view) {
         if (!mGoogleApiClient.isConnected()) {
             Toast.makeText(this, getString(R.string.not_connected), Toast.LENGTH_SHORT).show();
@@ -155,14 +160,15 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
                 mGoogleApiClient,
                 Constants.DETECTION_INTERVAL_IN_MILLISECONDS,
                 getActivityDetectionPendingIntent()).setResultCallback(this);
-    }
+    }*/
 
     // onclick implementation for stop button
     @OnClick(R.id.stopButton)
     public void stop(View view) {
         mSharedPreferences.edit().putBoolean("isRunning", false).apply();
+        Log.i(TAG, "Stopping");
         disableButton(stopButton);
-        enableButton(startButton);
+        //enableButton(startButton);
 
         // remove all activity updates for the pending intent that was used to request activity updates
         ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(
@@ -185,13 +191,20 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
     }
 
     public void showStartDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Done!")
-                .setMessage(getString(R.string.start_dialog_message)).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        }).setCancelable(false).show();
+        if(mSharedPreferences.getBoolean("Seen", true)) {
+            Log.i(TAG, "User has seen the dialog");
+        } else {
+            Log.i(TAG, "User has not seen the dialog");
+            mSharedPreferences.edit().putBoolean("Seen", true);
+            mSharedPreferences.edit().apply();
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("Done!")
+                    .setMessage(getString(R.string.start_dialog_message)).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            }).setCancelable(false).show();
+        }
     }
 
     private void disableButton(FButton button) {
@@ -211,6 +224,7 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
     // when a google api client object successfully connects
     @Override
     public void onConnected(Bundle bundle) {
+        startDetectingActivity();
         Log.i(TAG, "Connected to GoogleApiClient");
     }
 

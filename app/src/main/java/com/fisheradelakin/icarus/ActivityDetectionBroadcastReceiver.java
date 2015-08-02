@@ -44,11 +44,10 @@ public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {
                     .setContentText(getRandomNotificationMessage(context))
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                     .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setOnlyAlertOnce(true);
+                    .setOnlyAlertOnce(true)
+                    .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
             NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             manager.notify(1, nBuilder.build());
-
-            // TODO: add vibration
         }
 
         SharedPreferences.Editor editor = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE).edit();
