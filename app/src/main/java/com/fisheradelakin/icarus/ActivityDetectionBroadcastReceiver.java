@@ -18,6 +18,9 @@ import java.util.Random;
  * Created by Fisher on 3/20/15.
  */
 public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {
+
+    // TODO: add boot receiver code here
+
     protected static final String TAG = "activity-detection-response-receiver";
 
     @Override
@@ -34,7 +37,6 @@ public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {
             previous = "hi";
         }
         // BUG: It sends a notification when you're walking. :/
-        // TODO: test this thoroughly
         if(previous.equals(context.getResources().getString(R.string.in_vehicle)) && upAct.getType() == 2 && upAct.getConfidence() >= 50) {
             NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.drawable.ic_small_icon)
@@ -45,7 +47,7 @@ public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .setOnlyAlertOnce(true)
-                    .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+                    .setVibrate(new long[] { 0, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000 });
             NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             manager.notify(1, nBuilder.build());
         }

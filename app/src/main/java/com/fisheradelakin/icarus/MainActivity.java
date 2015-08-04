@@ -41,9 +41,7 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
     protected GoogleApiClient mGoogleApiClient;
     private PendingIntent mActivityDetectionPendingIntent;
 
-    //@Bind(R.id.startButton) FButton startButton;
     @Bind(R.id.stopButton) FButton stopButton;
-    //@InjectView(R.id.activityTextView) TextView mActivityText;
 
     protected SharedPreferences mSharedPreferences;
 
@@ -61,6 +59,7 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
         // enable/disable buttons
         if(mSharedPreferences.getBoolean("isRunning", false)) {
             //disableButton(startButton);
+            Log.i(TAG, "Icarus is already running");
         } else {
             disableButton(stopButton);
         }
@@ -145,30 +144,12 @@ public class MainActivity extends ActionBarActivity implements ConnectionCallbac
         super.onPause();
     }
 
-    // onclick implementation for start button
-    /*@OnClick(R.id.startButton)
-    public void start(View view) {
-        if (!mGoogleApiClient.isConnected()) {
-            Toast.makeText(this, getString(R.string.not_connected), Toast.LENGTH_SHORT).show();
-        }
-        mSharedPreferences.edit().putBoolean("isRunning", true).apply();
-        disableButton(startButton);
-        enableButton(stopButton);
-        showStartDialog();
-
-        ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
-                mGoogleApiClient,
-                Constants.DETECTION_INTERVAL_IN_MILLISECONDS,
-                getActivityDetectionPendingIntent()).setResultCallback(this);
-    }*/
-
     // onclick implementation for stop button
     @OnClick(R.id.stopButton)
     public void stop(View view) {
         mSharedPreferences.edit().putBoolean("isRunning", false).apply();
         Log.i(TAG, "Stopping");
         disableButton(stopButton);
-        //enableButton(startButton);
 
         // remove all activity updates for the pending intent that was used to request activity updates
         ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(
