@@ -20,6 +20,7 @@ import java.util.Random;
 public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {
 
     // TODO: add boot receiver code here
+    // TODO: > boot receiver works. it just crashes.
 
     protected static final String TAG = "activity-detection-response-receiver";
 
